@@ -1,0 +1,194 @@
+:root {
+  --ikea-blue: #0058A3;
+  --ikea-yellow: #FFD200;
+  --ikea-bg: #fff;
+  --ikea-grey: #f7f7f7;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Noto Sans', Arial, Verdana, sans-serif;
+  background: var(--ikea-grey);
+  color: #111;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 32px;
+  padding: 40px 32px 24px 32px;
+  background: var(--ikea-bg);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  animation: fadeInDown 1s;
+  border-bottom: 6px solid var(--ikea-yellow);
+}
+.header img {
+  height: 100px;
+  width: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  animation: fadeIn 1.2s;
+  background: var(--ikea-yellow);
+  padding: 8px;
+}
+.header-title {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 10px 0;
+  letter-spacing: 1px;
+  animation: fadeIn 1.2s;
+  text-transform: uppercase;
+}
+.header-desc {
+  font-size: 1.15em;
+  color: #111;
+  margin: 0;
+  font-weight: 400;
+}
+#map {
+  height: 70vh;
+  width: 100vw;
+  z-index: 1;
+  background: var(--ikea-bg);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  border-radius: 0 0 18px 18px;
+  margin-bottom: 24px;
+}
+.view-switcher {
+  display: flex;
+  gap: 18px;
+  padding: 24px 32px 0 32px;
+  background: var(--ikea-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border-bottom: 1px solid #eee;
+  justify-content: center;
+}
+.show-all-btn {
+  padding: 16px 44px;
+  background: #fff;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 8px;
+  font-size: 1.15em;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.show-all-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+.show-all-btn:hover:not(:disabled) {
+  background: #111;
+  color: #fff;
+  border: 2px solid #111;
+}
+#list-view {
+  background: var(--ikea-bg);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  border-radius: 18px;
+  margin-bottom: 32px;
+}
+#list-view h2 {
+  color: #111;
+  font-size: 1.6em;
+  font-weight: 700;
+  margin-bottom: 18px;
+  margin-top: 0;
+  text-transform: uppercase;
+}
+#points-list li {
+  margin-bottom: 22px;
+  padding: 18px 0 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.13em;
+}
+#points-list li:last-child {
+  border-bottom: none;
+}
+#points-list b {
+  color: #111;
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+#points-list a {
+  color: var(--ikea-blue);
+  font-weight: 700;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+#points-list a:hover {
+  color: var(--ikea-yellow);
+  background: var(--ikea-blue);
+  text-decoration: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.leaflet-popup-content {
+  font-size: 1.13em;
+  font-family: 'Noto Sans', Arial, Verdana, sans-serif;
+}
+.main-landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--ikea-grey);
+  gap: 32px;
+}
+.main-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #111;
+  text-align: center;
+  margin: 0 0 18px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Noto Sans', Arial, Verdana, sans-serif;
+}
+.main-arrow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  font-size: 2.5em;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  outline: none;
+  text-decoration: none;
+}
+.main-arrow-btn:hover {
+  background: #111;
+  color: #fff;
+  transform: scale(1.08);
+}
+.arrow {
+  display: inline-block;
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-left: 2px;
+} 

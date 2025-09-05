@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карта Club-Mate в Санкт-Петербурге</title>
+  <link rel="icon" href="club-mate.png" type="image/png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header">
+    <h1 class="header-title">Карта Club-Mate в Санкт-Петербурге</h1>
+    <p class="header-desc">Где купить лимонад Club-Mate в Петербурге — отмечено на карте!</p>
+  </div>
+  <div class="view-switcher" id="switcher-block">
+    <button class="show-all-btn" id="showMapBtn" onclick="showMap()">Показать на карте</button>
+    <button class="show-all-btn" id="showListBtn" onclick="showList()" style="display:none;">Показать списком</button>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:32px;">
+    <button class="show-all-btn" id="findNearestBtn" onclick="findNearest()">Найти ближайшее место</button>
+  </div>
+  <div id="map" style="display:none;"></div>
+  <div id="list-view" style="display:none;padding:24px;max-width:700px;margin:0 auto;">
+    <h2 style="margin-top:0;">Список мест, где купить Club-Mate</h2>
+    <ul id="points-list" style="list-style:none;padding:0;margin:0;"></ul>
+  </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Центр карты — Санкт-Петербург
+    var map = L.map('map').setView([59.9342802, 30.3350986], 12);
+
+    // Добавляем слой карты CartoDB Positron
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }).addTo(map);
+
+    // Кастомная иконка Club-Mate
+    var clubMateIcon = L.icon({
+      iconUrl: 'club-mate.png',
+      iconSize: [40, 55], // ширина, высота
+      iconAnchor: [20, 55], // точка "дна" бутылки
+      popupAnchor: [0, -55]
+    });
+
+    // Массив точек Club-Mate с Instagram
+    var points = [
+      {
+        name: "Stay Gold Pizza Spot",
+        address: "ул. Некрасова, 52",
+        lat: 59.938285,
+        lng: 30.366522,
+        instagram: "https://www.instagram.com/staygold.pizzaspot?igsh=MXZpZHo4d3dsazRu"
+      },
+      {
+        name: "Coop-Garage",
+        address: "Гороховая 47",
+        lat: 59.926524,
+        lng: 30.321079,
+        instagram: "https://www.instagram.com/cooperative_garage?igsh=MWJ2OHRpMTVic2Jxdg=="
+      },
+      {
+        name: "AF Brew Taproom",
+        address: "Курляндская 48",
+        lat: 59.908889,
+        lng: 30.274722,
+        instagram: "https://www.instagram.com/afbrew.taproom?igsh=MTg2NGxwOXN2OHltNw=="
+      },
+      {
+        name: "Огурцы",
+        address: "наб. реки Фонтанки 96",
+        lat: 59.927222,
+        lng: 30.347222,
+        instagram: "https://www.instagram.com/ogurtsinafontanke?igsh=ZDUwbTlhZDNtMm1v"
+      },
+      {
+        name: "Tiger Lily",
+        address: "Невский проспект 48",
+        lat: 59.934167,
+        lng: 30.328611,
+        instagram: "https://www.instagram.com/cafe_tiger_lily?igsh=MWtvaWQ0bnpyMTJqbA=="
+      },
+      {
+        name: "Jack & Chan",
+        address: "Инженерная 7",
+        lat: 59.938056,
+        lng: 30.332778,
+        instagram: "https://www.instagram.com/jackandchan?igsh=MWZvcWl1OW51bzE3dw=="
+      },
+      {
+        name: "Бар Утопист",
+        address: "Ковенский 14",
+        lat: 59.931944,
+        lng: 30.361111,
+        instagram: "https://www.instagram.com/utopist.spb?igsh=ZjJtNzV1azUxd2g1"
+      },
+      {
+        name: "Technodoner",
+        address: "Некрасова 28",
+        lat: 59.938900,
+        lng: 30.366000,
+        instagram: "https://www.instagram.com/technodoner?igsh=YnQwMnJmY3doZ2lx"
+      }
+    ];
+
+    // Добавляем маркеры на карту с кастомной иконкой и ссылкой на Instagram
+    var markers = [];
+    points.forEach(function(point) {
+      var marker = L.marker([point.lat, point.lng], {icon: clubMateIcon})
+        .addTo(map)
+        .bindPopup('<b>' + point.name + '</b><br>' + point.address + '<br><a href="' + point.instagram + '" target="_blank" style="color:#e1306c;font-weight:500;">Instagram</a>');
+      markers.push(marker);
+    });
+
+    // Функция для поиска ближайшей точки
+    function findNearest() {
+      if (!navigator.geolocation) {
+        alert('Геолокация не поддерживается вашим браузером');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        var userLat = pos.coords.latitude;
+        var userLng = pos.coords.longitude;
+        var minDist = Infinity;
+        var minIdx = -1;
+        points.forEach(function(point, idx) {
+          var d = getDistance(userLat, userLng, point.lat, point.lng);
+          if (d < minDist) {
+            minDist = d;
+            minIdx = idx;
+          }
+        });
+        if (minIdx !== -1) {
+          // Выделяем маркер: увеличиваем и открываем popup
+          markers.forEach(function(m, i) {
+            m.setIcon(clubMateIcon);
+          });
+          var highlightIcon = L.icon({
+            iconUrl: 'club-mate.png',
+            iconSize: [60, 82],
+            iconAnchor: [30, 82],
+            popupAnchor: [0, -82]
+          });
+          markers[minIdx].setIcon(highlightIcon);
+          markers[minIdx].openPopup();
+          map.setView([points[minIdx].lat, points[minIdx].lng], 15);
+        }
+      }, function() {
+        alert('Не удалось получить ваше местоположение');
+      });
+    }
+    // Хаверсин для расстояния в метрах
+    function getDistance(lat1, lon1, lat2, lon2) {
+      var R = 6371000;
+      var dLat = (lat2-lat1) * Math.PI/180;
+      var dLon = (lon2-lon1) * Math.PI/180;
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Переключение между картой и списком
+    function showMap() {
+      document.getElementById('map').style.display = '';
+      document.getElementById('list-view').style.display = 'none';
+      document.getElementById('showMapBtn').style.display = 'none';
+      document.getElementById('showListBtn').style.display = '';
+      map.invalidateSize();
+    }
+    function showList() {
+      document.getElementById('map').style.display = 'none';
+      document.getElementById('list-view').style.display = '';
+      document.getElementById('showMapBtn').style.display = '';
+      document.getElementById('showListBtn').style.display = 'none';
+    }
+    window.showMap = showMap;
+    window.showList = showList;
+
+    // Генерация списка точек
+    function renderList() {
+      var ul = document.getElementById('points-list');
+      ul.innerHTML = '';
+      points.forEach(function(point) {
+        var li = document.createElement('li');
+        li.style.marginBottom = '18px';
+        li.innerHTML = '<b>' + point.name + '</b><br>' +
+          point.address + '<br>' +
+          '<a href="' + point.instagram + '" target="_blank" style="color:#e1306c;font-weight:500;">Instagram</a>';
+        ul.appendChild(li);
+      });
+    }
+    renderList();
+    // По умолчанию всё скрыто, только кнопка 'Показать на карте' видна
+  </script>
+</body>
+</html> 
